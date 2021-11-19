@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
@@ -15,9 +16,11 @@ import (
 
 const Netflix = "https://www.netflix.com/title/"
 
+const YoutubeUrl = "https://www.youtube.com/premium"
+
 var proxyUrl string
 
-func RequestIP(requrl string, ip string) string {
+func RequestIP(requrl string, ip string, parseType string) string {
 	if ip == "" {
 		return "Error"
 	}
@@ -48,7 +51,7 @@ func RequestIP(requrl string, ip string) string {
 		return "Error"
 	}
 	req.Host = host
-	req.Header.Set("USER-AGENT", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
+	req.Header.Set("USER-AGENT", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")
 	resp, err := client.Do(req)
 	if err != nil {
 		//return errors.New(strings.ReplaceAll(err.Error(), newrequrl, requrl))
@@ -57,7 +60,10 @@ func RequestIP(requrl string, ip string) string {
 	defer resp.Body.Close()
 
 	Header := resp.Header
-
+	content, _ := ioutil.ReadAll(resp.Body)
+	if parseType == "1" {
+		return string(content)
+	}
 	if Header["X-Robots-Tag"] != nil {
 		if Header["X-Robots-Tag"][0] == "index" {
 			return "us"
@@ -89,7 +95,7 @@ func ParseIP(s string) int {
 
 func UnblockTest(MoiveID int, ip string) bool {
 	testURL := Netflix + strconv.Itoa(MoiveID)
-	reCode := RequestIP(testURL, ip)
+	reCode := RequestIP(testURL, ip, "")
 	if strings.Contains(reCode, "Ban") {
 		return false
 	} else {
@@ -106,6 +112,43 @@ func FindCountry(Code string) string {
 		}
 	}
 	return Code
+}
+
+func Youtube(url string) (bool, string) {
+	proxyUrl = url
+	var ipv4 string
+	dns := "www.youtube.com"
+
+	flag.Parse()
+
+	// 解析ip地址
+	ns, err := net.LookupHost(dns)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Err: %s", err.Error())
+		return false, ""
+	}
+
+	switch {
+	case len(ns) != 0:
+		for _, n := range ns {
+			if ParseIP(n) == 4 {
+				ipv4 = n
+			}
+		}
+
+	}
+	testURL := YoutubeUrl
+	content := RequestIP(testURL, ipv4, "1")
+	is := strings.Contains(content, "Premium is not available in your country")
+	if is {
+		//存在
+		//fmt.Println(content)
+		return false, "不支持"
+	} else {
+		//不存在
+		return true, "支持"
+	}
+	return false, content
 }
 
 func NF(url string) (bool, string) {
@@ -138,7 +181,7 @@ func NF(url string) (bool, string) {
 	}
 	// 拼接非自制剧的URL
 	testURL := Netflix + strconv.Itoa(NonSelfMadeAvailableID)
-	ipv4CountryCode := RequestIP(testURL, ipv4)
+	ipv4CountryCode := RequestIP(testURL, ipv4, "0")
 
 	/***
 	 * 检查CountryCode返回值:
@@ -157,7 +200,7 @@ func NF(url string) (bool, string) {
 				//检测是否支持自制
 				if UnblockTest(SelfMadeAvailableID, ipv4) {
 					testURL2 := Netflix + strconv.Itoa(SelfMadeAvailableID)
-					ipv4CountryCode2 := RequestIP(testURL2, ipv4)
+					ipv4CountryCode2 := RequestIP(testURL2, ipv4, "0")
 					ip := "NF库识别的IP地域信息：" + FindCountry(ipv4CountryCode2) + "区(" + strings.ToUpper(strings.Split(ipv4CountryCode2, "-")[0]) + ") NetFlix 非原生IP"
 					return false, "您的出口IP不能解锁Netflix，仅支持自制剧的观看\n" + ip
 					//支持自制剧
