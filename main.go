@@ -114,11 +114,10 @@ func downloadConfig() {
 
 func main() {
 	//downloadConfig()
-	flag.Parse()
-
 	//0:NF 1:Youtube
 	parseType := flag.String("t", "0", "检测类型")
-
+	flag.Parse()
+	fmt.Println(parseType)
 	//parseType = 0
 	ex, err := os.Executable()
 	if err != nil {
