@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/hub/executor"
@@ -112,8 +113,17 @@ func downloadConfig() {
 }
 
 func main() {
-	downloadConfig()
-
+	//downloadConfig()
+	//0:NF 1:Youtube
+	parseType := flag.String("t", "0", "检测类型")
+	flag.Parse()
+	fmt.Println(parseType)
+	//parseType = 0
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	exPath = filepath.Dir(ex)
 	//解析配置信息
 	config, err := executor.ParseWithPath(exPath + "/config.yaml")
 	if err != nil {
@@ -180,7 +190,13 @@ func main() {
 		fmt.Print(str)
 
 		//Netflix检测
-		ok, out := nf.NF("http://" + proxyUrl)
+		var ok bool
+		var out string
+		if *parseType == "1" {
+			ok, out = nf.Youtube("http://" + proxyUrl)
+		} else {
+			ok, out = nf.NF("http://" + proxyUrl)
+		}
 		if out == "" {
 			out = "完全不支持Netflix"
 		}
@@ -198,7 +214,7 @@ func main() {
 		index++
 	}
 
-	if err := excel.SaveAs(exPath+"/Netflix.xlsx"); err != nil {
+	if err := excel.SaveAs(exPath + "/Netflix.xlsx"); err != nil {
 		fmt.Println(err)
 	}
 }
