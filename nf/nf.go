@@ -39,13 +39,13 @@ func RequestIP(requrl string, ip string, parseType string) string {
 		Proxy:           http.ProxyURL(proxy),
 	}
 
-	newrequrl := strings.Replace(requrl, host, ip, 1)
+	//newrequrl := strings.Replace(requrl, host, ip, 1)
 	client := &http.Client{
 		Transport:     netTransport,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error { return http.ErrUseLastResponse },
-		Timeout:       5 * time.Second,
+		Timeout:       10 * time.Second,
 	}
-	req, err := http.NewRequest("GET", newrequrl, nil)
+	req, err := http.NewRequest("GET", requrl, nil)
 	if err != nil {
 		//return errors.New(strings.ReplaceAll(err.Error(), newrequrl, requrl))
 		return "Error"
@@ -54,6 +54,7 @@ func RequestIP(requrl string, ip string, parseType string) string {
 	req.Header.Set("USER-AGENT", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Println(err.Error())
 		//return errors.New(strings.ReplaceAll(err.Error(), newrequrl, requrl))
 		return "Error"
 	}
