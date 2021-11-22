@@ -139,6 +139,9 @@ func Youtube(url string) (bool, string) {
 	}
 	testURL := YoutubeUrl
 	content := RequestIP(testURL, ipv4, "1")
+	if content == "Error" {
+		return false, "不支持"
+	}
 	is := strings.Contains(content, "Premium is not available in your country")
 	if is {
 		//存在
