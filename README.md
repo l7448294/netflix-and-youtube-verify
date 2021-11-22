@@ -1,3 +1,13 @@
+# 引用了原作者的实现  增加了检测youtube premium
+youtube premium后台播放
+简单加了个参数-t 0是检测nf -t 1 是检测youtube premium
+
+```bash
+./main -t 1
+```
+
+
+
 # netflix-all-verify
 
 NetFlix批量检测,golang编写
