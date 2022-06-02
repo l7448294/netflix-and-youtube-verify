@@ -18,6 +18,8 @@ const Netflix = "https://www.netflix.com/title/"
 
 const YoutubeUrl = "https://www.youtube.com/premium"
 
+const GoogleUrl = "https://www.google.com"
+
 var proxyUrl string
 
 func RequestIP(requrl string, ip string, parseType string) string {
@@ -144,6 +146,46 @@ func Youtube(url string) (bool, string) {
 		return false, "不支持"
 	}
 	is := strings.Contains(content, "Premium is not available in your country")
+	if is {
+		//存在
+		//fmt.Println(content)
+		return false, "不支持"
+	} else {
+		//不存在
+		return true, "支持"
+	}
+	return false, content
+}
+
+func Google(url string) (bool, string) {
+	proxyUrl = url
+	var ipv4 string
+	dns := "www.google.com"
+
+	flag.Parse()
+
+	// 解析ip地址
+	ns, err := net.LookupHost(dns)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Err: %s", err.Error())
+		return false, ""
+	}
+
+	switch {
+	case len(ns) != 0:
+		for _, n := range ns {
+			if ParseIP(n) == 4 {
+				ipv4 = n
+			}
+		}
+
+	}
+	testURL := GoogleUrl
+	content := RequestIP(testURL, ipv4, "1")
+	if content == "Error" {
+		return false, "不支持"
+	}
+	is := strings.Contains(content, "302 Moved")
 	if is {
 		//存在
 		//fmt.Println(content)

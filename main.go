@@ -114,7 +114,7 @@ func downloadConfig() {
 
 func main() {
 	//downloadConfig()
-	//0:NF 1:Youtube
+	//0:NF 1:Youtube 3：Google
 	parseType := flag.String("t", "0", "检测类型")
 	flag.Parse()
 	ex, err := os.Executable()
@@ -125,6 +125,7 @@ func main() {
 	//解析配置信息
 	config, err := executor.ParseWithPath(exPath + "/config.yaml")
 	if err != nil {
+		panic(err)
 		return
 	}
 	//获取端口
@@ -192,6 +193,8 @@ func main() {
 		var out string
 		if *parseType == "1" {
 			ok, out = nf.Youtube("http://" + proxyUrl)
+		} else if *parseType == "2" {
+			ok, out = nf.Google("http://" + proxyUrl)
 		} else {
 			ok, out = nf.NF("http://" + proxyUrl)
 		}
