@@ -112,8 +112,8 @@ func downloadConfig() {
 	}
 }
 
+// 程序入口
 func main() {
-	//downloadConfig()
 	//0:NF 1:Youtube 3：Google
 	parseType := flag.String("t", "0", "检测类型")
 	flag.Parse()
