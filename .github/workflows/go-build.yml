@@ -7,7 +7,21 @@ on:
     branches: [ "main" ]
 
 jobs:
-
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: gocapture ${{ github.ref }}
+          draft: false
+          prerelease: false
   build:
     runs-on: ubuntu-latest
     steps:
@@ -23,3 +37,14 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+    - name: package
+      run: tar -zcvf main.tgz main
+    - name: upload
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: main.tgz
+        asset_name: main.tgz
+        asset_content_type: application/gzip
