@@ -38,13 +38,13 @@ jobs:
     - name: Test
       run: go test -v ./...
     - name: package
-      run: tar -zcvf main.tgz main
+      run: tar -zcvf netflix-all-verify.tgz netflix-all-verify
     - name: upload
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: main.tgz
-        asset_name: main.tgz
+        asset_path: netflix-all-verify.tgz
+        asset_name: netflix-all-verify.tgz
         asset_content_type: application/gzip
