@@ -1,6 +1,7 @@
 on:
-  push: 
-    branches: [ "main" ]
+  push: # 每次带有 tag 的 push 候触发
+    tags:
+      - 'v*'
 
 name: Build Release
 jobs:
