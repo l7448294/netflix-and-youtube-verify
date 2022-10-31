@@ -1,11 +1,10 @@
 on:
-  push: # 每次带有 tag 的 push 候触发
-    tags:
-      - 'v*'
+  push:
+    branches: [ "main" ]
 
 name: Build Release
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master # checkout 代码
