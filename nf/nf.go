@@ -20,6 +20,7 @@ const YoutubeUrl = "https://www.youtube.com/premium"
 
 const GoogleUrl = "https://www.google.com"
 
+//测试打包
 var proxyUrl string
 
 func RequestIP(requrl string, ip string, parseType string) string {
