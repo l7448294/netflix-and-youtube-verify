@@ -19,7 +19,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: gocapture ${{ github.ref }}
+          release_name: netflix-all-verify ${{ github.ref }}
           draft: false
           prerelease: false
   build:
