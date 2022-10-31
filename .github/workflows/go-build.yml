@@ -19,11 +19,6 @@ jobs:
         with: # 将下述可执行文件 release 上去
           draft: false # Release草稿
           files: |
-            dist/nf_darwin_amd64
-            dist/nf_darwin_arm64
             dist/nf_linux_amd64
-            dist/nf_linux_arm64
-            dist/nf_linux_s390x
-            dist/nf_linux_mips
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
