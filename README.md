@@ -7,8 +7,6 @@ youtube premium后台播放
 ./main -t 1
 ```
 
-  
-
 # netflix-all-verify
 
 NetFlix批量检测,golang编写
