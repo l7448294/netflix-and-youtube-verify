@@ -4,7 +4,7 @@ on:
 
 name: Build Release
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master # checkout 代码
